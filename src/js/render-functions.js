@@ -13,7 +13,7 @@ export function renderGallery(images) {
         views,
         comments,
         downloads,
-      }) => (
+      }) => `
         <a href="${largeImageURL}" class="gallery__item">
           <img
             src="${webformatURL}"
@@ -36,7 +36,7 @@ export function renderGallery(images) {
             </p>
           </div>
         </a>
-      )
+      `
     )
     .join('');
 
