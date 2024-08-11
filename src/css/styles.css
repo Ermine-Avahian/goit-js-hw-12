@@ -112,6 +112,7 @@ p {
 .load-more {
   display: flex;
   justify-content: center;
+  margin-top: 32px;
 }
 
 .hidden {
