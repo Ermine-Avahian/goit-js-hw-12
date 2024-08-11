@@ -1,57 +1,71 @@
 import { fetchImages } from './js/pixabay-api.js';
 import {
-  renderGallery,
+  renderImages,
   clearGallery,
   toggleLoadMoreButton,
-  toggleEndMessage,
-  scrollToNextPage,
+  showEndOfResultsMessage,
 } from './js/render-functions.js';
+import SimpleLightbox from 'simplelightbox';
+import 'simplelightbox/dist/simple-lightbox.min.css';
 
-let query = '';
-let page = 1;
+let currentPage = 1;
+let currentQuery = '';
 const perPage = 15;
+const lightbox = new SimpleLightbox('.gallery a');
 
-document
-  .getElementById('search-form')
-  .addEventListener('submit', async event => {
-    event.preventDefault();
-    query = event.target.elements.query.value.trim();
-    page = 1;
+document.querySelector('.search-form').addEventListener('submit', onSearch);
+document.querySelector('.load-more').addEventListener('click', onLoadMore);
 
-    if (!query) return;
-
-    clearGallery();
-    toggleLoadMoreButton(false);
-    toggleEndMessage(false);
-
-    try {
-      const data = await fetchImages(query, page, perPage);
-      renderGallery(data.hits);
-
-      if (data.hits.length < perPage || data.totalHits <= page * perPage) {
-        toggleEndMessage(true);
-      } else {
-        toggleLoadMoreButton(true);
-      }
-    } catch (error) {
-      console.error('Error:', error);
-    }
-  });
-
-document.getElementById('load-more').addEventListener('click', async () => {
-  page += 1;
+async function onSearch(event) {
+  event.preventDefault();
+  currentQuery = event.target.elements.searchQuery.value.trim();
+  if (!currentQuery) return;
+  currentPage = 1;
+  clearGallery();
+  toggleLoadMoreButton(false);
 
   try {
-    const data = await fetchImages(query, page, perPage);
-    renderGallery(data.hits);
+    const data = await fetchImages(currentQuery, currentPage, perPage);
+    renderImages(data.hits);
+    lightbox.refresh();
 
-    if (data.hits.length < perPage || data.totalHits <= page * perPage) {
+    if (data.totalHits > perPage) {
+      toggleLoadMoreButton(true);
+    } else {
       toggleLoadMoreButton(false);
-      toggleEndMessage(true);
     }
-
-    scrollToNextPage();
   } catch (error) {
-    console.error('Error:', error);
+    console.error(error);
   }
-});
+}
+
+async function onLoadMore() {
+  currentPage += 1;
+
+  try {
+    const data = await fetchImages(currentQuery, currentPage, perPage);
+    renderImages(data.hits);
+    lightbox.refresh();
+
+    const totalPages = Math.ceil(data.totalHits / perPage);
+    if (currentPage >= totalPages) {
+      toggleLoadMoreButton(false);
+      showEndOfResultsMessage();
+    } else {
+      smoothScroll();
+    }
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+function smoothScroll() {
+  const { height: cardHeight } = document
+    .querySelector('.gallery')
+    .firstElementChild.getBoundingClientRect();
+
+  window.scrollBy({
+    top: cardHeight * 2,
+    behavior: 'smooth',
+  });
+}

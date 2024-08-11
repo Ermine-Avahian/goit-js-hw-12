@@ -11,24 +11,21 @@
     />
   </head>
   <body>
-    <div class="container">
-      <form id="search-form">
+    <header>
+      <form class="search-form" id="search-form">
         <input
           type="text"
-          name="query"
+          name="searchQuery"
           placeholder="Search images..."
           autocomplete="off"
         />
         <button type="submit">Search</button>
       </form>
-
-      <div id="gallery" class="gallery"></div>
-      <button id="load-more" class="hidden">Load more</button>
-      <p id="end-message" class="hidden">
-        We're sorry, but you've reached the end of search results.
-      </p>
-    </div>
-
+    </header>
+    <main>
+      <section class="gallery"></section>
+      <button class="load-more" style="display: none">Load more</button>
+    </main>
     <script type="module" src="./main.js"></script>
   </body>
 </html>

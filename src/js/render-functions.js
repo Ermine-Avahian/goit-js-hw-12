@@ -1,72 +1,30 @@
-import SimpleLightbox from 'simplelightbox';
-import 'simplelightbox/dist/simple-lightbox.min.css';
-
-export function renderGallery(images) {
-  const gallery = document.getElementById('gallery');
+export function renderImages(images) {
+  const gallery = document.querySelector('.gallery');
   const markup = images
     .map(
-      ({
-        webformatURL,
-        largeImageURL,
-        tags,
-        likes,
-        views,
-        comments,
-        downloads,
-      }) => `
-        <a href="${largeImageURL}" class="gallery__item">
-          <img
-            src="${webformatURL}"
-            alt="${tags}"
-            loading="lazy"
-            class="gallery__image"
-          />
-          <div class="gallery__info">
-            <p>
-              <b>Likes:</b> ${likes}
-            </p>
-            <p>
-              <b>Views:</b> ${views}
-            </p>
-            <p>
-              <b>Comments:</b> ${comments}
-            </p>
-            <p>
-              <b>Downloads:</b> ${downloads}
-            </p>
-          </div>
+      ({ webformatURL, largeImageURL, tags }) => `
+        <a href="${largeImageURL}" class="gallery-item">
+            <img src="${webformatURL}" alt="${tags}" loading="lazy" />
         </a>
-      `
+    `
     )
     .join('');
-
   gallery.insertAdjacentHTML('beforeend', markup);
-
-  const lightbox = new SimpleLightbox('.gallery a', { captionDelay: 250 });
-  lightbox.refresh();
 }
 
 export function clearGallery() {
-  const gallery = document.getElementById('gallery');
+  const gallery = document.querySelector('.gallery');
   gallery.innerHTML = '';
 }
 
 export function toggleLoadMoreButton(show) {
-  const loadMoreButton = document.getElementById('load-more');
-  loadMoreButton.classList.toggle('hidden', !show);
+  const loadMoreBtn = document.querySelector('.load-more');
+  loadMoreBtn.style.display = show ? 'block' : 'none';
 }
 
-export function toggleEndMessage(show) {
-  const endMessage = document.getElementById('end-message');
-  endMessage.classList.toggle('hidden', !show);
-}
-
-export function scrollToNextPage() {
-  const { height: cardHeight } = document
-    .querySelector('.gallery__item')
-    .getBoundingClientRect();
-  window.scrollBy({
-    top: cardHeight * 2,
-    behavior: 'smooth',
-  });
+export function showEndOfResultsMessage() {
+  const endMessage = document.createElement('p');
+  endMessage.textContent =
+    "We're sorry, but you've reached the end of search results.";
+  document.body.appendChild(endMessage);
 }
