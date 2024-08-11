@@ -3,48 +3,55 @@ import {
   renderGallery,
   clearGallery,
   toggleLoadMoreButton,
+  toggleEndMessage,
+  scrollToNextPage,
 } from './js/render-functions.js';
 
-let currentPage = 1;
-let currentQuery = '';
+let query = '';
+let page = 1;
+const perPage = 15;
 
-document.querySelector('form').addEventListener('submit', async e => {
-  e.preventDefault();
-  currentQuery = e.target.elements.query.value.trim();
-  currentPage = 1;
-  clearGallery();
-  toggleLoadMoreButton(false);
+document
+  .getElementById('search-form')
+  .addEventListener('submit', async event => {
+    event.preventDefault();
+    query = event.target.elements.query.value.trim();
+    page = 1;
 
-  try {
-    const data = await fetchImages(currentQuery, currentPage);
-    if (data.totalHits > 0) {
+    if (!query) return;
+
+    clearGallery();
+    toggleLoadMoreButton(false);
+    toggleEndMessage(false);
+
+    try {
+      const data = await fetchImages(query, page, perPage);
       renderGallery(data.hits);
-      toggleLoadMoreButton(data.totalHits > currentPage * 15);
-    }
-  } catch (error) {
-    console.error(error);
-  }
-});
 
-document.querySelector('.load-more').addEventListener('click', async () => {
-  currentPage += 1;
+      if (data.hits.length < perPage || data.totalHits <= page * perPage) {
+        toggleEndMessage(true);
+      } else {
+        toggleLoadMoreButton(true);
+      }
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  });
+
+document.getElementById('load-more').addEventListener('click', async () => {
+  page += 1;
 
   try {
-    const data = await fetchImages(currentQuery, currentPage);
+    const data = await fetchImages(query, page, perPage);
     renderGallery(data.hits);
-    toggleLoadMoreButton(data.totalHits > currentPage * 15);
-    scrollPage();
+
+    if (data.hits.length < perPage || data.totalHits <= page * perPage) {
+      toggleLoadMoreButton(false);
+      toggleEndMessage(true);
+    }
+
+    scrollToNextPage();
   } catch (error) {
-    console.error(error);
+    console.error('Error:', error);
   }
 });
-
-function scrollPage() {
-  const { height: cardHeight } = document
-    .querySelector('.gallery')
-    .firstElementChild.getBoundingClientRect();
-  window.scrollBy({
-    top: cardHeight * 2,
-    behavior: 'smooth',
-  });
-}

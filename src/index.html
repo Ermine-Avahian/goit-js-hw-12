@@ -7,20 +7,23 @@
     <link rel="stylesheet" href="./css/styles.css" />
   </head>
   <body>
-    <form id="search-form">
-      <input
-        type="text"
-        name="query"
-        placeholder="Search images..."
-        autocomplete="off"
-        required
-      />
-      <button type="submit">Search</button>
-    </form>
+    <div class="container">
+      <form id="search-form">
+        <input
+          type="text"
+          name="query"
+          placeholder="Search images..."
+          autocomplete="off"
+        />
+        <button type="submit">Search</button>
+      </form>
 
-    <div class="gallery"></div>
-
-    <button class="load-more" style="display: none">Load more</button>
+      <div id="gallery" class="gallery"></div>
+      <button id="load-more" class="hidden">Load more</button>
+      <p id="end-message" class="hidden">
+        We're sorry, but you've reached the end of search results.
+      </p>
+    </div>
 
     <script type="module" src="./main.js"></script>
   </body>
