@@ -26,8 +26,12 @@ export default defineConfig(({ command }) => {
       outDir: '../dist',
     },
     optimizeDeps: {
-      exclude: ['axios'],
+      exclude: ['axios'], // Виключення axios з обробки Vite
     },
     plugins: [injectHTML(), FullReload(['./src/**/**.html'])],
+    // Додаємо налаштування для CommonJS
+    commonjsOptions: {
+      transformMixedEsModules: true,
+    },
   };
 });
