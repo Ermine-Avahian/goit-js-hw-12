@@ -25,6 +25,9 @@ export default defineConfig(({ command }) => {
       },
       outDir: '../dist',
     },
+    optimizeDeps: {
+      exclude: ['axios'],
+    },
     plugins: [injectHTML(), FullReload(['./src/**/**.html'])],
   };
 });
