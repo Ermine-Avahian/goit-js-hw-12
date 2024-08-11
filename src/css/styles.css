@@ -108,3 +108,12 @@ p {
   letter-spacing: 0.04em;
   color: #2e2f42;
 }
+
+.load-more {
+  display: flex;
+  justify-content: center;
+}
+
+.hidden {
+  display: none;
+}
